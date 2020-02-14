@@ -1,15 +1,22 @@
-# Telegraf Example Plugin
-
-This is an example repo containing an external, runtime loaded plugin using
-Go's plugin package.  This feature requires Telegraf 1.12 and is considered
-experimental.
-
-### Building
-```
+# Instructions
+## Build telegraf
+```bash
+go get github.com/influxdata/telegraf/
+cd ~/go/src/github.com/influxdata/telegraf/
+git checkout 1.13.3
 make
+./scripts/build.py --package --platform=linux --arch=amd64 --build-tags=goplugin
 ```
 
-### Loading
+```bash
+go get github.com/mildebrandt/telegraf-plugins/
+cd ~/go/src/github.com/mildebrandt/telegraf-plugins/
+cp ~/go/src/github.com/influxdata/telegraf/build/telegraf_1.13.3-1_amd64.deb ./telegraf
+make telegraf
 ```
-telegraf --config telegraf.conf --plugin-directory ./path/to/shared-objects
+
+## Run example plugin
+```bash
+make
+docker run -it --rm --name=telegraf -v $PWD/telegraf.conf:/etc/telegraf/telegraf.conf:ro -v $PWD/telegraf-plugins.so:/usr/lib/telegraf-plugins/telegraf-plugins.so:ro telegraf:plugin-support --test
 ```
